@@ -39,7 +39,9 @@ local descriptor = require "protobuf.descriptor"
 local FieldDescriptor = descriptor.FieldDescriptor
 local text_format = require "protobuf.text_format"
 
-module("protobuf.protobuf")
+--module("protobuf.protobuf")
+local protobuf = {}
+_M = protobuf
 
 local function make_descriptor(name, descriptor, usable_key)
     local meta = {
@@ -502,10 +504,10 @@ local function _IsPresent(descriptor, value)
     end
 end
 
-function sortFunc(a, b)
+local function sortFunc(a, b)
     return a.index < b.index
 end
-function pairsByKeys (t, f)
+local function pairsByKeys (t, f)
     local a = {}
     for n in pairs(t) do table.insert(a, n) end
     table.sort(a, f)
@@ -904,7 +906,7 @@ local function property_setter(message_meta)
 	end
 end
 
-function _AddClassAttributesForNestedExtensions(descriptor, message_meta)
+local function _AddClassAttributesForNestedExtensions(descriptor, message_meta)
     local extension_dict = descriptor._extensions_by_name
     for extension_name, extension_field in pairs(extension_dict) do
         message_meta._member[extension_name] = extension_field
@@ -957,4 +959,6 @@ local function Message(descriptor)
 end
 
 _M.Message = Message
+
+return protobuf
 
