@@ -6,6 +6,12 @@ Forked from topameng/protoc-gen-lua
 * "protoc-gen-lua" is a python file, give it opportunity to show it self. ("protoc-gen-lua" => "protoc-gen-lua.py")
 * Convert python code to executable file(.exe) in win32/64 platform, tested in Win10_x64. (with pyinstaller)
 
+# 使用说明
+* 将 proto 文件复制进 example\protos\ 目录下
+* 在 example 目录下执行 make_proto_exe.bat
+* lua 文件会被输出到 example\Lua\protos 目录下
+* 使用前需要将 protobuf 目录复制到自己的 Lua 文件根目录下
+* 每个 pb 的 lua 文件，在 require 之后会返回一个对象，需要自己管理。
 
 
 # Links:
