@@ -1,11 +1,11 @@
-::设置proto文件所在的路径，相对于工具的路径，如果需要使用绝对路径，需要修改代码
+﻿::设置proto文件所在的路径，相对于工具的路径，如果需要使用绝对路径，需要修改代码
 set protoRelativeDir=.\protos\
 set luaOutputRelativeDir=.\Lua\
 
 ::逻辑实现部分
 set toolsDir=%~dp0
 set protoDir=%toolsDir%%protoRelativeDir%
-set luaOutputDir=%toolsDir%%luaOutputRelativeDir%
+set luaOutputDir=%toolsDir%%luaOutputRelativeDir%Protol
 
 if not exist %luaOutputDir% md %luaOutputDir%
 
