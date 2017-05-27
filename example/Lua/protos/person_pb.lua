@@ -132,11 +132,15 @@ PERSONGROUP.fields = {PERSONGROUP_CLASSMATES_FIELD}
 PERSONGROUP.is_extendable = false
 PERSONGROUP.extensions = {}
 
-PTE_MAN = 1
-PTE_WOMEN = 2
+_mod.PTE_MAN = 1
+_mod.PTE_WOMEN = 2
 _mod.Person = protobuf.Message(PERSON)
 _mod.PersonGroup = protobuf.Message(PERSONGROUP)
 _mod.Phone = protobuf.Message(PHONE)
+_mod.protobuf_Descriptor.PERSON_TYPE_ENUM = PERSON_TYPE_ENUM
+_mod.protobuf_Descriptor.Person = PERSON 
+_mod.protobuf_Descriptor.PersonGroup = PERSONGROUP 
+_mod.protobuf_Descriptor.Phone = PHONE 
 
 _mod.Person.RegisterExtension(PHONE_PHONES_FIELD)
 

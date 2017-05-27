@@ -150,8 +150,9 @@ class Env(object):
             # if the child doesn't be founded, it must be in this file
             return type_name[len('.'.join(self.package)) + 1:]
         if node.filename != self.filename:
-            return node.filename + '_pb.' + node.get_local_name()
-        return node.get_local_name()
+            return node.filename + '_pb.protobuf_Descriptor.' + node.get_local_name()
+        #本地变量用大写方式
+        return node.get_local_name().upper().replace('.', '_')
 
     def get_msg_name(self, type_name):
         try:
@@ -166,6 +167,19 @@ class Env(object):
             return node.filename + '_pb.' + name
         name = node.get_local_name()
         return name.upper().replace('.', '_')
+
+    def get_extendee_name(self, type_name):
+        try:
+            node = self.lookup_name(type_name)
+        except:
+            # if the child doesn't be founded, it must be in this file
+            name = type_name[len('.'.join(self.package)) + 1:]
+            return name
+        if node.filename != self.filename:
+            name = node.get_local_name()
+            return node.filename + '_pb.' + name
+        name = node.get_local_name()
+        return name
 
     def lookup_name(self, name):
         names = name.split('.')
@@ -330,17 +344,17 @@ def code_gen_field(index, field_desc, env):
         context('.default_value = %s\n' % default_value)
 
     if field_desc.HasField('type_name'):
-        type_name = env.get_ref_name(field_desc.type_name).upper().replace('.', '_')
+        type_name = env.get_ref_name(field_desc.type_name)
         if field_desc.type == FDP.TYPE_MESSAGE:
             context('.message_type = %s\n' % type_name)
         else:
             context('.enum_type = %s\n' % type_name)
 
     if field_desc.HasField('extendee'):
-        type_name = env.get_ref_name(field_desc.extendee)
+        type_name = env.get_extendee_name(field_desc.extendee)
         env.register.append(
             "_mod.%s.RegisterExtension(%s)\n" % (type_name, obj_name)
-		)
+        )
 
     context('.type = %d\n' % field_desc.type)
     context('.cpp_type = %d\n\n' % CPP_TYPE[field_desc.type])
@@ -388,6 +402,7 @@ def code_gen_message(message_descriptor, env, containing_type = None):
     if containing_type:
         context('.containing_type = %s\n' % containing_type)
 
+    env.message.append('_mod.protobuf_Descriptor.%s = %s \n' % (full_name, obj_name))
     env.message.append('_mod.%s = protobuf.Message(%s)\n' % (full_name, obj_name))
 
     env.context.append(context.getvalue())
@@ -412,8 +427,9 @@ def code_gen_file(proto_file, env, is_gen):
 
     for enum_desc in proto_file.enum_type:
         code_gen_enum(enum_desc, env)
+        env.message.append('_mod.protobuf_Descriptor.%s = %s\n' % (enum_desc.name, enum_desc.name))
         for enum_value in enum_desc.value:
-            env.message.append('%s = %d\n' % (enum_value.name,
+            env.message.append('_mod.%s = %d\n' % (enum_value.name,
                                               enum_value.number))
 
     for msg_desc in proto_file.message_type:
@@ -426,6 +442,7 @@ def code_gen_file(proto_file, env, is_gen):
         for i in includes:
             lua('local %s_pb = require("Protol.%s_pb")\n' % (i, i))
         lua("local _mod = {}")
+        lua("_mod.protobuf_Descriptor = {}")
 
         lua('\n\n')
         map(lua, env.descriptor)

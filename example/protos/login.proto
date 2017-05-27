@@ -1,10 +1,11 @@
-
-message LoginRequest {
-	required int32 id = 1;
-	required string name = 2;
-	optional string email = 3;
-}
-
-message LoginResponse {
-	required int32 id = 1;
+import "Person.proto";
+/*
+跨 proto 枚举和 Message 嵌套测试
+*/
+message CMSG_Login_Req{
+    optional uint64 account_guid = 1;    //!帐号guid
+    optional string access_token = 2;   //!口令
+	optional string version = 3;        //!版本号
+	optional PersonGroup person_group = 4;
+	optional PERSON_TYPE_ENUM person_type = 5;
 }

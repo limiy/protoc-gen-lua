@@ -1,4 +1,4 @@
-﻿::设置proto文件所在的路径，相对于工具的路径，如果需要使用绝对路径，需要修改代码
+:: 设置proto文件所在的路径，相对于工具的路径，如果需要使用绝对路径，需要修改代码
 set protoRelativeDir=.\protos\
 set luaOutputRelativeDir=.\Lua\
 
