@@ -150,7 +150,7 @@ class Env(object):
             # if the child doesn't be founded, it must be in this file
             return type_name[len('.'.join(self.package)) + 1:]
         if node.filename != self.filename:
-            return node.filename + '_pb.protobuf_Descriptor.' + node.get_local_name()
+            return node.filename + '_pb.exported_Descriptor.' + node.get_local_name()
         #本地变量用大写方式
         return node.get_local_name().upper().replace('.', '_')
 
@@ -402,7 +402,7 @@ def code_gen_message(message_descriptor, env, containing_type = None):
     if containing_type:
         context('.containing_type = %s\n' % containing_type)
 
-    env.message.append('_mod.protobuf_Descriptor.%s = %s \n' % (full_name, obj_name))
+    env.message.append('_mod.exported_Descriptor.%s = %s \n' % (full_name, obj_name))
     env.message.append('_mod.%s = protobuf.Message(%s)\n' % (full_name, obj_name))
 
     env.context.append(context.getvalue())
@@ -427,7 +427,7 @@ def code_gen_file(proto_file, env, is_gen):
 
     for enum_desc in proto_file.enum_type:
         code_gen_enum(enum_desc, env)
-        env.message.append('_mod.protobuf_Descriptor.%s = %s\n' % (enum_desc.name, enum_desc.name))
+        env.message.append('_mod.exported_Descriptor.%s = %s\n' % (enum_desc.name, enum_desc.name))
         for enum_value in enum_desc.value:
             env.message.append('_mod.%s = %d\n' % (enum_value.name,
                                               enum_value.number))
@@ -441,13 +441,13 @@ def code_gen_file(proto_file, env, is_gen):
         lua('local protobuf = require "protobuf.protobuf"\n')
         for i in includes:
             lua('local %s_pb = require("Protol.%s_pb")\n' % (i, i))
-        lua("local _mod = {}")
-        lua("_mod.protobuf_Descriptor = {}")
-
         lua('\n\n')
         map(lua, env.descriptor)
         lua('\n')
         map(lua, env.context)
+        lua('\n')
+        lua("local _mod = {}\n")
+        lua("_mod.exported_Descriptor = {}\n")
         lua('\n')
         env.message.sort()
         map(lua, env.message)
